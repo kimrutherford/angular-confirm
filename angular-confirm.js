@@ -65,9 +65,15 @@ angular.module('angular-confirm', ['ui.bootstrap'])
       },
       link: function (scope, element, attrs) {
 
+        function click() {
+          if (element.attr('href')) {
+            window.location.href = element.attr("href");
+          } else {
+            scope.ngClick();
+          }
+        }
 
         element.unbind("click").bind("click", function ($event) {
-
           $event.preventDefault();
 
           if (angular.isUndefined(scope.confirmIf) || scope.confirmIf) {
@@ -82,10 +88,13 @@ angular.module('angular-confirm', ['ui.bootstrap'])
             if (scope.confirmCancel) {
               data.cancel = scope.confirmCancel;
             }
-            $confirm(data, scope.confirmSettings || {}).then(scope.ngClick);
+            $confirm(data, scope.confirmSettings || {}).then(function() {
+              click();
+            });
           } else {
-
-            scope.$apply(scope.ngClick);
+            scope.$apply(function() {
+              click($event);
+            });
           }
         });
 
